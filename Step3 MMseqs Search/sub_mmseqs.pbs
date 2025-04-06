@@ -1,0 +1,28 @@
+#PBS -q huge
+#PBS -l select=1:ncpus=96:mem=900gb
+#PBS -l walltime=168:00:00
+#PBS -N mmseqs
+
+cd $PBS_O_WORKDIR
+module load MMseqs Anaconda3
+source activate base
+
+INPUT_FILE_NAME="AcCas12n"
+DATABASE_NAME="NR"
+
+
+if [[ $DATABASE_NAME == NR ]]; then  
+    DATABASE_PATH="/global/lhshare/mmseqs_database/NR/NR"
+elif [[ $DATABASE_NAME == MEER ]]; then
+    DATABASE_PATH="/global/lhshare/mmseqs_database/MEER/MEER"
+else
+    echo "Dataset ${DATABASE_NAME} not supported"
+fi
+
+# run easy-search, note the input should come from foldseek
+mmseqs easy-search ${INPUT_FILE_NAME}_foldseek.fasta ${DATABASE_PATH} ${INPUT_FILE_NAME}_${DATABASE_PATH}.tsv --format-output "query,target,pident,fident,nident,alnlen,bits,tseq,evalue" tmp --threads 96 --num-iterations 2 --max-seqs 2500 --search-type 1
+# run tsv2fasta, create a fasta file for further clustering
+python tsv2fasta.py ${INPUT_FILE_NAME}_${DATABASE_PATH}.tsv ${INPUT_FILE_NAME}_${DATABASE_PATH}.fasta
+# run easy-cluster, cluster with 0.5 identity
+mmseqs easy-cluster ${INPUT_FILE_NAME}_${DATABASE_PATH}.fasta ${INPUT_FILE_NAME}_${DATABASE_PATH}_s50 tmp/ --min-seq-id 0.5 --threads 96
+

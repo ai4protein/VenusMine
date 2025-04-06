@@ -1,0 +1,11 @@
+#PBS -q huge
+#PBS -l select=1:ncpus=96:mem=900gb
+#PBS -l walltime=168:00:00
+#PBS -N mmseqs
+
+cd $PBS_O_WORKDIR
+module load MMseqs
+
+mmseqs easy-cluster [INPUT_FILE_NAME].fasta [INPUT_FILE_NAME]_s50 tmp/ --min-seq-id 0.5 --threads 96
+
+

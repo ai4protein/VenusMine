@@ -1,0 +1,27 @@
+#PBS -q ai
+#PBS -l select=1:ncpus=6:ngpus=1:mem=128gb:host=ai1
+#PBS -l walltime=168:00:00
+#PBS -N calc_repr
+##PBS -e task_file/${PDB_JOBNAME}_${PBS_JOBID}.err
+##PBS -o task_file/${PDB_JOBNAME}_${PBS_JOBID}.out
+
+cd $PBS_O_WORKDIR
+module load Anaconda3 cuda/11.7
+
+
+file_name="xxx_NR"
+model_name="prostt5"
+
+# load environment
+if [[ $model_name == esm* ]]; then  
+    source activate esmfold  
+elif [[ $model_name == pro*tt5 ]]; then
+    source activate prostt5 
+else
+    echo "Model ${model_name} not supported"
+fi
+
+
+python ${model_name}_extract.py sequence/${file_name}.fasta result_${model_name}/ --log_file task_file/${file_name}_${model_name}.log
+
+
