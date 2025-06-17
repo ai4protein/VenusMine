@@ -1,4 +1,4 @@
-# ProMine
+# VenusMine
 
 Codebase for protein language model based enzyme discovery pipeline
 

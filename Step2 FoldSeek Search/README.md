@@ -22,7 +22,8 @@ Step2 FoldSeek Search/
 │   ├── alis_mgnify_esm30.m8
 │   ├── alis_pdb100.m8
 └── foldseek_result_analysis.ipynb
-``​`
+```
+
 
 Some bugs might because:
 - Chinese names or spaces in file name
